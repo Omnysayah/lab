@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Калькулятор металлоконструкции МК-0236</title>
+    <style>
+        :root {
+            --primary: #2c3e50;
+            --secondary: #3498db;
+            --accent: #e74c3c;
+            --light: #ecf0f1;
+            --border-radius: 8px;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f8f9fa;
+        }
+        
+        .card {
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            padding: 25px;
+            margin-bottom: 25px;
+        }
+        
+        h1 {
+            color: var(--primary);
+            margin-bottom: 10px;
+            font-size: 24px;
+        }
+        
+        .product-code {
+            color: #7f8c8d;
+            margin-bottom: 20px;
+            font-size: 16px;
+        }
+        
+        .calculator-form {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 15px;
+        }
+        
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        label {
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--primary);
+        }
+        
+        input, select {
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: var(--border-radius);
+            font-size: 16px;
+        }
+        
+        .price-display {
+            background: var(--light);
+            padding: 20px;
+            border-radius: var(--border-radius);
+            text-align: center;
+            margin-top: 20px;
+        }
+        
+        .price-label {
+            font-size: 16px;
+            color: #7f8c8d;
+            margin-bottom: 5px;
+        }
+        
+        .price-value {
+            font-size: 32px;
+            color: var(--accent);
+            font-weight: bold;
+        }
+        
+        .btn {
+            background: var(--secondary);
+            color: white;
+            border: none;
+            padding: 14px 20px;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: background 0.3s;
+            margin-top: 10px;
+        }
+        
+        .btn:hover {
+            background: #2980b9;
+        }
+        
+        .btn-accent {
+            background: var(--accent);
+        }
+        
+        .btn-accent:hover {
+            background: #c0392b;
+        }
+        
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        
+        .btn-group .btn {
+            flex: 1;
+        }
+        
+        .formula {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: var(--border-radius);
+            font-size: 14px;
+            margin-top: 15px;
+            border-left: 4px solid var(--secondary);
+        }
+        
+        @media (min-width: 600px) {
+            .calculator-form {
+                grid-template-columns: 1fr 1fr;
+            }
+            
+            .full-width {
+                grid-column: 1 / -1;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h1>Металлоконструкция МК-0236</h1>
+        <div class="product-code">Артикул: МК-0236</div>
+        
+        <div class="calculator-form">
+            <div class="form-group">
+                <label for="metal-type">Тип металла:</label>
+                <select id="metal-type">
+                    <option value="45">Сталь Ст3сп (45 ₽/кг)</option>
+                    <option value="52">Сталь 20 (52 ₽/кг)</option>
+                    <option value="48">Арматура А500С (48 ₽/кг)</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="weight">Вес конструкции (кг):</label>
+                <input type="number" id="weight" value="285" min="1">
+            </div>
+            
+            <div class="form-group">
+                <label for="welding">Длина сварных швов (м):</label>
+                <input type="number" id="welding" value="18.7" step="0.1" min="0">
+            </div>
+            
+            <div class="form-group">
+                <label for="delivery">Расстояние доставки (км):</label>
+                <input type="number" id="delivery" value="100" min="0">
+            </div>
+            
+            <div class="form-group full-width">
+                <div class="price-display">
+                    <div class="price-label">Примерная стоимость:</div>
+                    <div class="price-value" id="result-price">87 450 ₽</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="formula">
+            <strong>Формула расчета:</strong><br>
+            Цена = (Вес × Стоимость металла) + (Длина сварных швов × 180 ₽/м) + (Расстояние × 70 ₽/км)
+        </div>
+        
+        <div class="btn-group">
+            <button class="btn" id="calculate-btn">Пересчитать</button>
+            <button class="btn btn-accent">Заказать</button>
+        </div>
+    </div>
+
+    <script>
+        // Элементы формы
+        const metalType = document.getElementById('metal-type');
+        const weight = document.getElementById('weight');
+        const welding = document.getElementById('welding');
+        const delivery = document.getElementById('delivery');
+        const resultPrice = document.getElementById('result-price');
+        const calculateBtn = document.getElementById('calculate-btn');
+        
+        // Параметры расчета
+        const weldingPrice = 180; // ₽/м
+        const deliveryPrice = 70; // ₽/км
+        
+        // Функция расчета стоимости
+        function calculatePrice() {
+            const metalPrice = parseFloat(metalType.value);
+            const weightValue = parseFloat(weight.value);
+            const weldingValue = parseFloat(welding.value);
+            const deliveryValue = parseFloat(delivery.value);
+            
+            const total = (weightValue * metalPrice) + (weldingValue * weldingPrice) + (deliveryValue * deliveryPrice);
+            
+            resultPrice.textContent = total.toLocaleString('ru-RU') + ' ₽';
+        }
+        
+        // События для пересчета
+        calculateBtn.addEventListener('click', calculatePrice);
+        metalType.addEventListener('change', calculatePrice);
+        weight.addEventListener('input', calculatePrice);
+        welding.addEventListener('input', calculatePrice);
+        delivery.addEventListener('input', calculatePrice);
+        
+        // Первоначальный расчет
+        calculatePrice();
+    </script>
+</body>
+</html>
